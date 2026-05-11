@@ -1,0 +1,17 @@
+{
+  "name": "cbe-signal-bot",
+  "version": "1.0.0",
+  "description": "Slack bot that collects CBE signals via /cbe-signal and appends them to a Google Sheet.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@slack/bolt": "^3.21.4",
+    "dotenv": "^16.4.5",
+    "googleapis": "^144.0.0"
+  }
+}
