@@ -4,6 +4,30 @@ require('dotenv').config();
 
 const OFFICES = ['Pittsburgh', 'NYC', 'London', 'Dublin', 'Beijing', 'Toronto', 'Remote'];
 const AREAS = ['Culture', 'Belonging', 'Connection', 'Leadership', 'Mission alignment', 'Trust', 'Other'];
+const FUNCTIONS = [
+  'Business',
+  'Design',
+  'Engineering',
+  'Executive',
+  'Finance',
+  'Learning and Curriculum',
+  'Legal',
+  'Marketing and Communications',
+  'People',
+  'Product',
+  'Proficiency Standard',
+  'Scaling Operations',
+];
+const PILLARS = [
+  'Language Learning',
+  'Platform',
+  'Growth',
+  'New Subjects',
+  'Score',
+  'Monetization X',
+  'Asia Region',
+  'N/A — not in a pillar',
+];
 
 const receiver = new ExpressReceiver({
   signingSecret: process.env.SLACK_SIGNING_SECRET,
@@ -97,6 +121,28 @@ app.command('/cbe-signal', async ({ ack, body, client, logger }) => {
           },
           {
             type: 'input',
+            block_id: 'function_block',
+            label: { type: 'plain_text', text: "What's your function?" },
+            element: {
+              type: 'static_select',
+              action_id: 'function_select',
+              placeholder: { type: 'plain_text', text: 'Select a function' },
+              options: toOptions(FUNCTIONS),
+            },
+          },
+          {
+            type: 'input',
+            block_id: 'pillar_block',
+            label: { type: 'plain_text', text: 'Which pillar are you in?' },
+            element: {
+              type: 'static_select',
+              action_id: 'pillar_select',
+              placeholder: { type: 'plain_text', text: 'Select a pillar' },
+              options: toOptions(PILLARS),
+            },
+          },
+          {
+            type: 'input',
             block_id: 'anon_block',
             label: { type: 'plain_text', text: 'Share anonymously?' },
             element: {
@@ -126,6 +172,8 @@ app.view('cbe_signal_submit', async ({ ack, view, client, logger }) => {
   const signal = v.signal_block.signal_input.value;
   const office = v.office_block.office_select.selected_option.value;
   const area = v.area_block.area_select.selected_option.value;
+  const func = v.function_block.function_select.selected_option.value;
+  const pillar = v.pillar_block.pillar_select.selected_option.value;
   const anonChoice = v.anon_block.anon_select.selected_option.value;
   const isAnonymous = anonChoice === 'yes';
 
@@ -147,6 +195,8 @@ app.view('cbe_signal_submit', async ({ ack, view, client, logger }) => {
     new Date().toISOString(),
     office,
     area,
+    func,
+    pillar,
     signal,
     isAnonymous ? 'Yes' : 'No',
     submittedBy,
@@ -157,7 +207,7 @@ app.view('cbe_signal_submit', async ({ ack, view, client, logger }) => {
     const sheets = getSheetsClient();
     await sheets.spreadsheets.values.append({
       spreadsheetId: process.env.GOOGLE_SHEET_ID,
-      range: 'A:G',
+      range: 'Sheet1!A1',
       valueInputOption: 'USER_ENTERED',
       insertDataOption: 'INSERT_ROWS',
       requestBody: { values: [row] },

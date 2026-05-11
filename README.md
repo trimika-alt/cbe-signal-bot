@@ -9,8 +9,8 @@ Duolingo.
 
 Each submission appends a row with these columns:
 
-| Timestamp | Office | Area | Signal (verbatim) | Anonymous | Submitted by | Source |
-| --------- | ------ | ---- | ----------------- | --------- | ------------ | ------ |
+| Timestamp | Office | Area | Function | Pillar | Signal (verbatim) | Anonymous | Submitted by | Source |
+| --------- | ------ | ---- | -------- | ------ | ----------------- | --------- | ------------ | ------ |
 
 `Source` is always `slash-command`. `Submitted by` is blank when the user
 chooses to remain anonymous; in that case the bot does not look up or store
